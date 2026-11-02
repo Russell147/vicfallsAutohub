@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-DGeXAQPT.js";var t=e(),n=()=>(0,t.jsx)(`div`,{className:`p-10 text-center text-sm text-muted-foreground`,children:`This listing could not be loaded.`});export{n as errorComponent};
