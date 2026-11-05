@@ -16,6 +16,7 @@ export function CarCard({ car }: { car: Car }) {
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             src={car.images[0]}
+            unoptimized={car.images[0].startsWith("http")}
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-slate-500">

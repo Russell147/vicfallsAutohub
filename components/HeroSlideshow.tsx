@@ -43,6 +43,7 @@ export function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
             priority={index === 0}
             sizes="100vw"
             src={slide.src}
+            unoptimized={slide.src.startsWith("http")}
           />
         ))}
         <div className="absolute inset-0 bg-gradient-to-r from-[#102c28]/65 via-[#102c28]/25 to-[#102c28]/40" />

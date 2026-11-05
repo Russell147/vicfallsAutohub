@@ -1,15 +1,21 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ListingContact } from "@/components/ListingContact";
 import { getCar } from "@/lib/cars";
+import { getPublishedListing } from "@/backend/user-listings";
+
+export const dynamic = "force-dynamic";
 
 export default async function ListingPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ listed?: string }>;
 }) {
-  const { id } = await params;
-  const car = getCar(id);
+  const [{ id }, query] = await Promise.all([params, searchParams]);
+  const car = getCar(id) ?? await getPublishedListing(id);
   if (!car) notFound();
 
   return (
@@ -19,18 +25,23 @@ export default async function ListingPage({
         <span className="mx-2">/</span>
         <span>{car.name}</span>
       </nav>
+      {query.listed === "1" && (
+        <p aria-live="polite" className="mb-5 rounded-lg bg-emerald-50 p-4 text-sm font-semibold text-emerald-900" role="status">
+          Your car is now published and visible to buyers.
+        </p>
+      )}
       <div className="grid items-start gap-8 lg:grid-cols-[1.4fr_0.8fr]">
         <div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-slate-100 sm:aspect-[16/10]">
             {car.images[0] && (
-              <Image alt={car.name} className="object-cover" fill priority sizes="(max-width: 1024px) 100vw, 65vw" src={car.images[0]} />
+              <Image alt={car.name} className="object-cover" fill priority sizes="(max-width: 1024px) 100vw, 65vw" src={car.images[0]} unoptimized={car.images[0].startsWith("http")} />
             )}
           </div>
           {car.images.length > 1 && (
             <div className="mt-3 grid grid-cols-4 gap-3">
               {car.images.slice(1, 5).map((image) => (
                 <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-slate-100" key={image}>
-                  <Image alt={`${car.name} photo`} className="object-cover" fill sizes="20vw" src={image} />
+                  <Image alt={`${car.name} photo`} className="object-cover" fill sizes="20vw" src={image} unoptimized={image.startsWith("http")} />
                 </div>
               ))}
             </div>
@@ -66,11 +77,7 @@ export default async function ListingPage({
               <h2 className="font-bold">Seller</h2>
               <p className="mt-1">{car.seller || "Private seller"}</p>
               <p className="text-sm text-[var(--muted)]">{(car.sellerType || "Private seller").split(" · ")[0]} · {car.location}</p>
-              {car.phone && (
-                <a className="mt-4 block rounded-lg bg-brand px-4 py-3 text-center font-bold text-white hover:bg-brand-dark" href={`tel:${car.phone}`}>
-                  Call seller
-                </a>
-              )}
+              <ListingContact carName={car.name} phone={car.phone} />
             </div>
           </article>
           <p className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">

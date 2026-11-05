@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CarCard } from "@/components/CarCard";
 import type { Car } from "@/lib/cars";
 
@@ -8,14 +8,28 @@ export function BrowseExplorer({
   cars,
   makes,
   initialMake,
+  initialSignedIn,
 }: {
   cars: Car[];
   makes: string[];
   initialMake: string;
+  initialSignedIn: boolean;
 }) {
   const [query, setQuery] = useState("");
   const [make, setMake] = useState(initialMake);
   const [maxPrice, setMaxPrice] = useState("");
+  const [showSignInMessage, setShowSignInMessage] = useState(initialSignedIn);
+
+  useEffect(() => {
+    if (!initialSignedIn) return;
+
+    const url = new URL(window.location.href);
+    url.searchParams.delete("signedIn");
+    window.history.replaceState(null, "", url);
+
+    const timeout = window.setTimeout(() => setShowSignInMessage(false), 5000);
+    return () => window.clearTimeout(timeout);
+  }, [initialSignedIn]);
 
   const filteredCars = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -28,6 +42,23 @@ export function BrowseExplorer({
 
   return (
     <section className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
+      {showSignInMessage && (
+        <div
+          aria-live="polite"
+          className="fixed right-5 top-5 z-50 flex items-center gap-4 rounded-lg bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-lg"
+          role="status"
+        >
+          <span>You are signed in successfully.</span>
+          <button
+            aria-label="Dismiss sign-in message"
+            className="text-xl leading-none hover:text-emerald-100"
+            onClick={() => setShowSignInMessage(false)}
+            type="button"
+          >
+            ×
+          </button>
+        </div>
+      )}
       <div>
         <p className="text-sm font-bold uppercase tracking-wider text-brand">Find your car</p>
         <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">Cars for sale in Zimbabwe</h1>

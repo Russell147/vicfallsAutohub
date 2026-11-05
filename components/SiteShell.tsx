@@ -20,6 +20,12 @@ export function SiteHeader() {
           <Link className="text-ink/80 transition hover:text-brand" href="/browse">
             Browse cars
           </Link>
+          <Link className="text-ink/80 transition hover:text-brand" href="/sell">
+            Sell your car
+          </Link>
+          <Link className="text-ink/80 transition hover:text-brand" href="/#about">
+            About
+          </Link>
           <Link className="hidden text-ink/80 transition hover:text-brand sm:inline" href="/safety">
             Safety
           </Link>
@@ -59,7 +65,8 @@ export function SiteFooter() {
           <h2 className="text-sm font-bold uppercase tracking-wider text-white/90">Marketplace</h2>
           <ul className="mt-4 space-y-3 text-sm text-white/70">
             <li><Link className="transition hover:text-white" href="/browse">Browse cars</Link></li>
-            <li><Link className="transition hover:text-white" href="/auth">List a vehicle</Link></li>
+            <li><Link className="transition hover:text-white" href="/#about">About Autohub</Link></li>
+            <li><Link className="transition hover:text-white" href="/sell">Sell your car</Link></li>
             <li><Link className="transition hover:text-white" href="/safety">Safety tips</Link></li>
           </ul>
         </nav>
