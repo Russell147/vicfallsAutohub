@@ -93,7 +93,7 @@ export async function handleChatRequest(request: Request) {
   ].join("\n");
 
   const endpoint =
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent";
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent";
 
   let response: Response;
   try {
@@ -123,12 +123,17 @@ export async function handleChatRequest(request: Request) {
   }
 
   if (!response.ok) {
-    console.error(`Gemini chat request returned HTTP ${response.status}.`);
+    const providerError = await response.text();
+    console.error(
+      `Gemini chat request returned HTTP ${response.status}: ${providerError.slice(0, 1_000)}`,
+    );
     return NextResponse.json(
       {
         error:
           response.status === 429
             ? "The assistant is busy. Please wait a moment and try again."
+            : response.status === 503
+              ? "The assistant is temporarily unavailable. Please try again in a moment."
             : "The assistant could not respond right now. Please try again.",
       },
       { status: response.status === 429 ? 429 : 502 },
